@@ -2,6 +2,8 @@ import os
 
 import data_base_module
 
+from tasks.views import router as tasks_router
+
 from fastapi import FastAPI, Depends, Body
 from starlette.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
@@ -11,6 +13,7 @@ from sqlalchemy.orm import Session
 origins = ["http://localhost:3000"]
 
 app = FastAPI()
+app.include_router(tasks_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,  # Список разрешенных источников
@@ -26,9 +29,9 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/api/get-tasks")
-def get(db: Session = Depends(get_db)):
-    return db.query(data_base_module.Task).all()
+# @app.get("/api/get-tasks")
+# def get(db: Session = Depends(get_db)):
+#     return db.query(data_base_module.Task).all()
 
 @app.post("/api/add-task")
 def add_task(body = Body(), db: Session = Depends(get_db)):
